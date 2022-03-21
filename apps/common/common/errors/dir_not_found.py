@@ -1,0 +1,2 @@
+class DirNotFound(Exception):
+    pass
