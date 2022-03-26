@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from engine_scanner import Engine
+from common.engine_scanner import Engine
 
 
 class FactoryEngines:
@@ -15,10 +15,11 @@ class FactoryEngines:
  
     def create(self,arguments:dict):
         args_copy = arguments.copy()
-        character_type = args_copy.pop("type")
+        print(args_copy)
+        engine_name = args_copy.pop("name")
         try:
-            creator_func = self.engine_creator[character_type]
+            creator_func = self.engine_creator[engine_name]
         except KeyError:
-            raise ValueError(f"The Type {character_type} don't exits")
-        return creator_func(**args_copy)
+            raise ValueError(f"The Type {engine_name} don't exits")
+        return creator_func(**arguments)
 

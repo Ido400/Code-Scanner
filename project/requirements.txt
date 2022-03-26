@@ -1,2 +1,6 @@
 -e apps/common
 -e apps/API
+-e apps/Master
+-e apps/PasswordEngine
+-e apps/Storage
+Flask[async]==2.0.3

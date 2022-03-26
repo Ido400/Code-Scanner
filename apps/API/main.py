@@ -1,60 +1,22 @@
-from crypt import methods
-from flask import Flask, request
+import uvicorn
+import motor
+from fastapi import FastAPI
+from beanie import init_beanie
+from tools.routes import user,dir
+from common.documents.user_document import User
 
-from common.manage_engines import ManageEngines
-from common.manage_folder import ManageFolder
 
-URL = ""
-app = Flask(__name__)
+MONGO_CONNECTION_STRING = "mongodb://root:Aa123456@localhost:27017/"
+app = FastAPI()
 
-manage_folder = ManageFolder(URL)
-manage_engines = ManageEngines("", "","")
-#manage_engines.load_engines(PATH)
+app.include_router(user.router)
+app.include_router(dir.router)
 
-@app.route("/user", methods=["POST"])
-def create_user():
-    pass
-@app.route("/user", methods=["GET"])
-def get_user():
-    pass
+@app.on_event("startup")
+async def app_init():
+    client =  motor.motor_asyncio.AsyncIOMotorClient(MONGO_CONNECTION_STRING)
+    await init_beanie(database=client.database_name, document_models=[User])
 
-@app.route("/dir", methods=["POST"])
-def post_dir():
-    """
-    Post:
-        {"dir_name" : ""} 
-    """
-    data = request.get_json()
-    manage_folder.create_dir(data["dir_name"])
-   
-@app.route("/file", methods=["POST"])
-def post_file():
-    """
-    Post:
-        {"user_id":"","dir_name":"","file_name": "", "file":"bytes"}
-    """
-    data = request.get_json()
-    manage_folder.create_file(data["dir_name"], data["file_name"], data["file"])
-    manage_engines.load_engines({data['dir_name']}, manage_folder)
-    manage_engines.engines_notify(data["user_id"],data['dir_name'],data['file_name'])
 
-@app.route("/file", methods=["PATCH"])
-def update_file():
-    """
-    PATCH:
-        {"user_id":"","dir_name":"","file_name": "", "file":"bytes"}
-    """
-    data = request.get_json()
-    manage_folder.create_file(data["dir_name"], data["file_name"], data["file"])
-    manage_engines.load_engines({data['dir_name']}, manage_folder)
-    manage_engines.engines_notify(data["user_id"],data['dir_name'],data['file_name'])
-
-@app.route("/plugins", methods=["POST"])
-def post_plugins():
-    """
-    {"data":{"plugins":[], "engines":[]}, "dir_name":""}
-    """
-    data = request.get_json()
-    manage_folder.create_file(data["dir_name"], "plugins.json", data["data"])
-
-app.run(host="localhost", port=5000,debug=True)
+if __name__ == "_main_":
+    uvicorn.run()

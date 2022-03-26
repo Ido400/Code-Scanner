@@ -1,10 +1,11 @@
 from manage_mongo import MongoDB
+from enum_mongo import Mongo
 from documents.engine_documnet import Engine
 
 class CRUDEngines:
    
-    def __init__(self, mongo:MongoDB) -> None:
-        self.mongo = mongo
+    def __init__(self, mongo:Mongo) -> None:
+        self.mongo = MongoDB(**mongo)
         self.engine_col = "engines"
     
     def create_engine_doc(self, 
@@ -26,7 +27,7 @@ class CRUDEngines:
     def update_engine_doc(self, engine:Engine):
         try:
             query = engine.user_id.dict()
-            self.mongo.insert_to_col(self.engine_col, engine, query)
+            self.mongo.insert_to_col(self.engine_col, engine.dict(), query)
         except:
             pass
     

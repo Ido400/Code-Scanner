@@ -1,24 +1,25 @@
-from apps.common.common.manage_mongo import MongoDB
+from manage_mongo import MongoDB
+from enum_mongo import Mongo
 from documents.user_document import User
 
 class CRUDUsers:
-    def __init__(self, mongo:MongoDB) -> None:
-        self.mongo = mongo
+    def __init__(self, mongo:Mongo) -> None:
+        self.mongo = MongoDB(**mongo)
         self.user_col = "users"
   
-    def create_user(self, user_name:str, folders:list, engines:dict) ->User:
+    def create_user(self, user_name:str) ->User:
         try:
-            user = User(user_name, folders, engines)
+            user = User(user_name, [], {})
             id_ = self.mongo.insert_document_get_id(self.user_col, user.dict())
             user.user_id = str(id_)
             return user
         except:
             pass
 
-    def get_user(self, user:User):
+    def get_user(self, user_id:dict):
         try:
-            data = self.mongo.get_col_query(self.user_col, user.user_id.dict())
-            user = list(data)[0]
+            data = list(self.mongo.get_col_query(self.user_col, user_id))[0]
+            user = User(**data)
             return user
         except:
             pass

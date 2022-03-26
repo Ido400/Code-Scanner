@@ -1,3 +1,10 @@
 env
 /apps/API/API.egg-info
 /apps/common/common.egg-info
+/apps/common/common/__pychache__/
+/apps/Master/Master.egg-info
+/apps/PasswordEngine/PasswordEngine.egg-info
+/apps/Storage/Storage.egg-info
+/apps/Storage/storage_files/
+*.pyc
+*.cpython-38.pyc

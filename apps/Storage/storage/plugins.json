@@ -1,8 +1,0 @@
-{
-    "plugins": ["password_engine"],
-    "engines": [
-        {
-            "name":"password_engine"
-        }
-    ]
-}

@@ -36,10 +36,10 @@ class Rabbit:
         try:
             self.connection = pika.BlockingConnection(
                 pika.ConnectionParameters(host=host, credentials=self.creds, heartbeat=0))
-            self.channel = self.connection.channel()
+            #self.channel = self.connection.channel()
         except Exception as e:
             sys.exit()
-            
+ 
     def declare_queue(self, queue_name: str, durable=True, auto_delete=False):
         """
             Declare queue, create if needed. This method creates or checks a
@@ -61,13 +61,29 @@ class Rabbit:
                 "You should not have an empty string as queue if there is no exchange.")
 
         try:
-            self.channel.queue_declare(
-                queue=queue_name, durable=durable, auto_delete=auto_delete)
+            with self.connection.channel() as channel:
+                channel.queue_declare(
+                    queue=queue_name, durable=durable, auto_delete=auto_delete)
         except Exception:
-            
             sys.exit()
 
-    def send_to_queue(self, message: str, queue: str, message_persistent=True):
+    def declare_exchange(self, exchange:str, type:str):
+        try:
+            with self.connection.channel() as channel:
+                channel.exchange_declare(exchange=exchange,exchange_type=type)
+        except:
+            sys.exit()
+    
+    def bind_queue(self, exchange:str, queue:str, routing_key:str):
+        try:
+            with self.connection.channel() as channel:
+                channel.queue_bind(exchange=exchange, queue=queue, 
+                                    routing_key=routing_key)
+        except:
+            sys.exit()
+
+    def send_to_queue(self, message: str, routing_key: str, 
+                        exchange:str="", message_persistent=True):
         """
             Publish a message directly to a queue. 
 
@@ -80,13 +96,13 @@ class Rabbit:
         """
 
         try:
-            self.channel.basic_publish(
-                exchange='',
-                routing_key=queue,
-                body=message,
-                properties=pika.BasicProperties(delivery_mode=2,) if message_persistent else None)
-        except Exception:
-            
+            with self.connection.channel() as channel:
+                channel.basic_publish(
+                    exchange=exchange,
+                    routing_key=routing_key,
+                    body=message,
+                    properties=pika.BasicProperties(delivery_mode=2,) if message_persistent else None)
+        except Exception:         
             sys.exit()
 
     def receive(self, queue: str, func: callable, prefetch_count=1, acknowledge=True):
@@ -111,12 +127,13 @@ class Rabbit:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
 
         try:
-            self.channel.basic_qos(prefetch_count=prefetch_count)
-            self.channel.basic_consume(
-                queue=queue, on_message_callback=callback, auto_ack=False if acknowledge else True)
-            self.channel.start_consuming()
+            with self.connection.channel() as channel:
+                channel.basic_qos(prefetch_count=prefetch_count)
+                channel.basic_consume(
+                    queue=queue, on_message_callback=callback, auto_ack=False if acknowledge else True)
+                channel.start_consuming()
         except Exception:
-           
             sys.exit()
+
     
-    
+

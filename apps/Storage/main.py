@@ -1,10 +1,11 @@
+import time
 from flask import Flask, jsonify, request
 
 from tools.file_system import FileSystem
 
 app = Flask(__name__)
 
-file_system = FileSystem("../storage")
+file_system = FileSystem("./storage_files")
 
 @app.route("/dir",methods=["POST"])
 def create_dir():
@@ -13,7 +14,7 @@ def create_dir():
     """
     data = request.get_json()
     file_system.create_dir(data["dir_name"])
-    
+    return "OK", 200
 
 @app.route("/file", methods=["POST"])
 def create_file():
@@ -21,7 +22,9 @@ def create_file():
     {"dir_name":"", "file_name":"", "file_data":""}
     """
     data = request.get_json()
+    print(type(data))
     file_system.create_file(data["dir_name"], data["file_name"], data["file_data"])
+    return "OK", 200
 
 @app.route("/file", methods=["GET"])
 def get_file():
@@ -31,4 +34,7 @@ def get_file():
     data = request.get_json()
     file = file_system.read_data(data["dir_name"], data["file_name"])
     data["file_data"] = file
-    return jsonify(data)
+    return file
+
+if __name__ == "__main__":
+    app.run(host="localhost", port=6000, debug=False)

@@ -1,12 +1,11 @@
-from pydantic import BaseModel,Field
+from beanie import Document, Indexed
 from typing import Optional
 
 
-class User(BaseModel):
-    user_id:Optional[str]=Field(..., allow_mutation=False)
-    user_name:str
-    folders:list
-    engines:Optional[dict]
+class User(Document):
+    user_name:Indexed(str, unique=True)
+    folders:Optional[list] = []
+    engines:Optional[dict] = {}
 
-    class Config:
-        validate_assignment = True
+    class Collection:
+        name = "users"

@@ -16,11 +16,16 @@ class Engine(ABC):
         pass
     
     @abstractmethod
-    def publish_engine(self, user_id:str, dir_name:str, file_name:str, status:str, rabbit:object):
+    def publish_engine(self, 
+                            user_id:str, 
+                            dir_name:str, 
+                            file_name:str, 
+                            status:str, 
+                            rabbit:object)-> None:
         pass
 
     @abstractmethod
-    def consume_engine(self, rabbit:object, func:callable):
+    def consume_engine(self, rabbit:object, func:callable)->None:
         pass
     
   
