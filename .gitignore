@@ -8,3 +8,4 @@ env
 /apps/Storage/storage_files/
 *.pyc
 *.cpython-38.pyc
+/apps/API/__pychache__/
