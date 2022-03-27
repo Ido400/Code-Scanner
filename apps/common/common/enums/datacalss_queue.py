@@ -8,3 +8,4 @@ class Queue:
     queue:str
     exchange:Exchange
     routing_key:str
+

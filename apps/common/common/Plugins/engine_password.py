@@ -4,7 +4,7 @@ from common.engine_scanner import Engine
 from common.enums.dataclass_exchange import Exchange
 from common.enums.datacalss_queue import Queue
 from common.manage_engines import factory
-exchange = Exchange("engines", "direct")
+
 
 class PasswordEngine(Engine):
     name: "engine_password"
@@ -14,6 +14,7 @@ class PasswordEngine(Engine):
     def __init__(self, name:str) -> None:
         self.name = name
         self.name_publish = "password_engine_publish"
+        exchange = Exchange("engines", "direct")
         self.queue = Queue(self.name, exchange, "password_engine_key")
       
     def send_to_engine(self,user_id:str ,dir_name:str, file_name:str, rabbit:ManageRabbit) -> None:

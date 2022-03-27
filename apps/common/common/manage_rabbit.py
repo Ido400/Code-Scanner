@@ -17,7 +17,6 @@ class ManageRabbit:
                                    queue.routing_key)
    
     def publish(self, queue:Queue, publish_strategy:PublishStrategy, data):
-        print(queue)
         publish_strategy.send_message(self.rabbit.send_to_queue, queue.routing_key, 
                                 queue.exchange.exchange, data)
     

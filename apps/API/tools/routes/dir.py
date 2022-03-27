@@ -88,6 +88,10 @@ async def create_file(file:File, user:User, background_task:BackgroundTasks):
         body: File, User
     This method will create a new file and notify the engines
     """
+    if(file.dir_name == "" or file.file_name == ""):
+        raise HTTPException(status_code=404, details="The dir name or file name not found")
+    if(user.user_name == ""):
+        raise HTTPException(status_code=404, details="The username is not found.")
     background_task.add_task(create_file_background_task, file)
     background_task.add_task(publish_engines_background_task, file, user)
 
@@ -100,6 +104,10 @@ async def update_file(file:File, user:User,background_task:BackgroundTasks):
         body: File, User
     This method will update the exist file.
     """
+    if(file.dir_name == "" or file.file_name == ""):
+        raise HTTPException(status_code=404, details="The dir name or file name not found")
+    if(user.user_name == ""):
+        raise HTTPException(status_code=404, details="The username is not found.")
     background_task.add_task(create_file_background_task, file)
     background_task.add_task(publish_engines_background_task, file, user)
 
@@ -112,6 +120,8 @@ async def update_engines(file:File, background_task:BackgroundTasks):
         body: File
     This method will update the engine plugin in the directory.
     """
+    if(dir.dir_name == ""):
+        raise HTTPException(status_code=404, details="The dir name is not found.")
     file.file_name= "plugins.json"
     file.file_data = file.file_plugins.json()
     background_task.add_task(create_file_background_task, file)
