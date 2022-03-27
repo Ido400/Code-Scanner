@@ -1,2 +1,2 @@
-class DirNotExists(Exception):
+class DirExists(Exception):
     pass

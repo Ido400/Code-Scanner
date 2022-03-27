@@ -1,6 +1,6 @@
 from flask import Flask, request
 
-from common.errors.dir_exsits import DirNotExists
+from common.errors.dir_exsits import DirExists
 from common.errors.dir_not_found import DirNotFound
 
 from tools.file_system import FileSystem
@@ -18,7 +18,7 @@ def create_dir() ->str:
         data = request.get_json()
         file_system.create_dir(data["dir_name"])
         return "OK", 200
-    except DirNotExists:
+    except DirExists:
         return "The dir exists", 400
 @app.route("/file", methods=["POST"])
 def create_file() ->str:

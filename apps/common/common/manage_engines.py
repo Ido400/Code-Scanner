@@ -14,11 +14,21 @@ class ManageEngines:
         self.rabbit = ManageRabbit(rabbit_setup, list_queues)
         
     async def load_engines(self, dir_name:str, manage_folder:ManageFolder):
+        """
+        This method will load the engines and create an engine object.
+
+        Args:
+        -----
+            dir_name(str): The name of the dir
+            manage_folder(ManageFolder): The manage folder object 
+        """
         json_strategy = ReadJson()
-        data = await manage_folder.read_data(dir_name, "plugins.json", json_strategy)
-        loader.load_plugins(data["plugins"])
-        self.engines = [factory.create(engine) for engine in data["engines"]]
-        
+        try:
+            data = await manage_folder.read_data(dir_name, "plugins.json", json_strategy)
+            loader.load_plugins(data["plugins"])
+            self.engines = [factory.create(engine) for engine in data["engines"]]
+        except FileNotFoundError:
+            raise FileNotFoundError("The plugins file not found")
     
     def engines_notify(self, user_id:str ,dir_name:str, file_name:str):
         for engine in self.engines:

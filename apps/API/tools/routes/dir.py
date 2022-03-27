@@ -6,23 +6,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 from common.manage_folder import ManageFolder
 from common.enums.dataclass_exchange import Exchange
+from common.enums.pydantic_file import File
 
 router = APIRouter(prefix="/dir")
 URL = "http://localhost:6000/"
 rabbit_setup = RabbitMQ(host="localhost", username="guest", password="guest")
 
-class Engine(BaseModel):
-    name:str
-    
-class Engines(BaseModel):
-    plugins:list
-    engines:List[Engine]
-
-class File(BaseModel):
-    dir_name:str 
-    file_name:Optional[str]
-    file_data:Optional[str]
-    file_plugins:Optional[Engines]
 
 def create_file_background_task(file:File):
     """
