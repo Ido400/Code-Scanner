@@ -1,12 +1,18 @@
 import importlib
+import logging
 
 from common.errors.plugin_not_found import PluginNotFoundError
+from common.factory_engines import LOGGER
+from common.logging_controller import exception
+
+Logger = logging.getLogger(__name__)
 
 class ModuleInterface:
     @staticmethod
     def register() -> None:
         pass
 
+@exception(LOGGER)
 def import_module(name: str) -> ModuleInterface:
     """
     This method will import the module 
@@ -16,6 +22,7 @@ def import_module(name: str) -> ModuleInterface:
     except ImportError:
         raise PluginNotFoundError("The plugin not found") 
 
+@exception(LOGGER)
 def load_plugins(plugins: list)->None:
     """
     This method will import the plugins 

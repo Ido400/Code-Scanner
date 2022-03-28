@@ -1,4 +1,4 @@
-from pyndatic import BaseModel
+from pydantic import BaseModel
 from typing import List
 
 from common.enums.pydantic_engine import Engine

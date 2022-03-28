@@ -1,9 +1,10 @@
 from common.enums.dataclass_rabbit import RabbitMQ
+from common.errors.plugin_not_found import PluginNotFoundError
 import common.loader  as loader
 from common.factory_engines import FactoryEngines
 from common.engine_scanner import Engine
 from common.manage_folder import ManageFolder
-from common.manage_rabbit import ManageRabbit, Rabbit
+from common.manage_rabbit import ManageRabbit
 from common.read_json import ReadJson
 
 factory = FactoryEngines()
@@ -29,12 +30,25 @@ class ManageEngines:
             self.engines = [factory.create(engine) for engine in data["engines"]]
         except FileNotFoundError:
             raise FileNotFoundError("The plugins file not found")
-    
-    def engines_notify(self, user_id:str ,dir_name:str, file_name:str):
+        except PluginNotFoundError:
+            raise PluginNotFoundError("The plugin not found")
+          
+    def engines_notify(self, user_name:str ,dir_name:str, file_name:str):
+        """
+        This method will notify the engines about new file.
+
+        Args:
+        -----
+            user_name(str): The user name index
+            dir_name(str): The dir that store the file
+            file_name(str): The file name that the client should scan 
+        """
         for engine in self.engines:
-            engine.send_to_engine(user_id,dir_name,file_name, self.rabbit)
+            engine.send_to_engine(user_name,dir_name,file_name, self.rabbit)
    
     def engine_publish(self, user_id:str, path:str, status:str, engine:Engine):
+        """
+        """
         engine.publish_engine(user_id,path,status, self.rabbit)
         
     def engines_consume(self, engine:Engine, func:callable):

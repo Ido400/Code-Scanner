@@ -1,7 +1,9 @@
-from typing import Any, Callable
-
+import logging
+from typing import Callable
+from common.logging_controller import exception
 from common.engine_scanner import Engine
 
+LOGGER = logging.getLogger(__name__)
 
 class FactoryEngines:
     def __init__(self) -> None:
@@ -28,7 +30,8 @@ class FactoryEngines:
 
         """
         self.engine_creator.pop(engine_type, None)
- 
+   
+    @exception(LOGGER)
     def create(self,arguments:dict):
         """
         This method will create the engine 

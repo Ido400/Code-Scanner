@@ -9,3 +9,5 @@ env
 *.pyc
 *.cpython-38.pyc
 /apps/API/__pychache__/
+*.log
+/apps/common/common/__pychache__

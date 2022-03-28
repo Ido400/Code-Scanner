@@ -1,0 +1,2 @@
+class ExchangeNotFound(Exception):
+    pass

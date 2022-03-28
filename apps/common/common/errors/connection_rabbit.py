@@ -1,0 +1,2 @@
+class FailedConnectRabbit(Exception):
+    pass

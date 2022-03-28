@@ -1,17 +1,16 @@
+from fastapi import APIRouter, HTTPException, BackgroundTasks
+
 from common.documents.user_document import User
 from common.enums.dataclass_rabbit import RabbitMQ
 from common.manage_engines import ManageEngines
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
-from typing import List, Optional
 from common.manage_folder import ManageFolder
-from common.enums.dataclass_exchange import Exchange
 from common.enums.pydantic_file import File
 
 router = APIRouter(prefix="/dir")
-URL = "http://localhost:6000/"
-rabbit_setup = RabbitMQ(host="localhost", username="guest", password="guest")
 
+URL = "http://localhost:6000/"
+
+rabbit_setup = RabbitMQ(host="localhost", username="guest", password="guest")
 
 def create_file_background_task(file:File):
     """
@@ -49,7 +48,7 @@ async def publish_engines_background_task(file:File, user:User):
     manage_engines.engines_notify(user.user_name, file.dir_name, file.file_name)
 
 @router.post("")
-async def create_dir(dir:File, user_:User, background_tasks:BackgroundTasks):
+async def create_dir(file:File, user:User, background_tasks:BackgroundTasks):
     """
     Http Request:
        route:  /dir
@@ -57,17 +56,16 @@ async def create_dir(dir:File, user_:User, background_tasks:BackgroundTasks):
        body:  File, user
     This method will create a new dir for specific user.
     """
-    if(dir.dir_name == ""):
+    if(file.dir_name == ""):
         raise HTTPException(status_code=404, details="The dir name is not found.")
-    if(user_.user_name == ""):
+    if(user.user_name == ""):
         raise HTTPException(status_code=404, details="The username is not found.")
-    background_tasks.add_task(create_dir_background_task, dir)
-    user = await User.find_one(User.user_name == user_.user_name)
-    if(dir.dir_name not in user.folders):
-        user.folders.append(dir.dir_name)
-        await user.save()
-
-    
+    background_tasks.add_task(create_dir_background_task, file)
+    user_ = await User.find_one(User.user_name == user.user_name)
+    if(file.dir_name not in user_.folders):
+        user_.folders.append(file.dir_name)
+        await user_.save()
+  
 @router.post("/file")
 async def create_file(file:File, user:User, background_task:BackgroundTasks):
     """

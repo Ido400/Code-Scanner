@@ -1,4 +1,4 @@
-from common.errors.dir_exsits import DirNotExists
+from common.errors.dir_exsits import DirExists
 from common.errors.dir_not_found import DirNotFound
 from common.errors.file_not_found import FileNotFound
 
@@ -21,7 +21,7 @@ class FileSystem:
             os.mkdir(f"{self.path}/{dir_name}")
             shutil.copy(f"{self.path}/plugins.json", f"{self.path}/{dir_name}")
         except OSError:
-            raise DirNotExists("The dir is not found")
+            raise DirExists("The dir is not found")
 
     def create_file(self, dir_name:str, file_name:str, file_data:str) -> None:
         """

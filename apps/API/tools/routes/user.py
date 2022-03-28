@@ -1,8 +1,12 @@
-from ctypes import WinError
-from common.documents.user_document import User
 from fastapi import APIRouter, HTTPException   
 from beanie.operators import Set
 from pymongo.errors import DuplicateKeyError
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
+from common.documents.user_document import User
+from common.logging_controller import exception
 
 router = APIRouter(prefix="/user")
 
@@ -18,8 +22,6 @@ async def add_user(user: User):
     """
     try:
         await user.insert()
-    except WinError:
-        raise HTTPException(status_code=500, detail=f"Can't connect to DB")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="The username is exists")
 
@@ -36,9 +38,7 @@ async def get_user(user_name: str) -> User:
         return user
     except AttributeError:
         raise HTTPException(status_code=404, detail=f"The user name {user_name} not found")
-    except WinError:
-        raise HTTPException(status_code=500, detail=f"Can't connect to DB")
-
+   
 @router.put("")
 async def update_user(user_update: User):
     """
@@ -55,10 +55,9 @@ async def update_user(user_update: User):
         await user.save()
     except AttributeError:
         raise HTTPException(status_code=404, detail=f"The user name {user_update.user_name} not found")
-    except WinError:
-        raise HTTPException(status_code=500, detail=f"Can't connect to DB")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="The username is exists")
+
 @router.put("/upsert")
 async def upsert_user(user: User):
     """
@@ -75,8 +74,6 @@ async def upsert_user(user: User):
         )
     except AttributeError:
         raise HTTPException(status_code=404, detail=f"The user name {user.user_name} not found")
-    except WinError:
-        raise HTTPException(status_code=500, detail=f"Can't connect to DB")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="The username is exists")
        
@@ -94,5 +91,4 @@ async def delete_user(user_name: str):
         await user.delete()
     except AttributeError:
         raise HTTPException(status_code=404, detail=f"The user name {user_name} not found")
-    except WinError:
-        raise HTTPException(status_code=500, detail=f"Can't connect to DB")
+   
