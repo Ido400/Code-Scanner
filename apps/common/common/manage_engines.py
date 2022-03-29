@@ -1,7 +1,9 @@
+import logging
+
 from common.enums.dataclass_rabbit import RabbitMQ
 from common.errors.plugin_not_found import PluginNotFoundError
 import common.loader  as loader
-from common.factory_engines import FactoryEngines
+from common.factory_engines import LOGGER, FactoryEngines
 from common.engine_scanner import Engine
 from common.manage_folder import ManageFolder
 from common.manage_rabbit import ManageRabbit
@@ -13,7 +15,7 @@ class ManageEngines:
     def __init__(self, rabbit_setup:RabbitMQ, list_queues:list) -> None:
         self.engines = []
         self.rabbit = ManageRabbit(rabbit_setup, list_queues)
-        
+    
     async def load_engines(self, dir_name:str, manage_folder:ManageFolder):
         """
         This method will load the engines and create an engine object.

@@ -1,24 +1,24 @@
-
+from asyncio.log import logger
+import sys
 import logging
 from functools import wraps
+from logging.handlers import TimedRotatingFileHandler
 
 def create_logger(logger_name:str):
-	import logging
 	#create a logger object
 	logger = logging.getLogger(logger_name)
 	logger.setLevel(logging.INFO)
-	
-	logging.basicConfig(filename=f"./logs/{logger_name}.log")
+	logFormat = "%(asctime)s %(levelname)-8s --- [%(name)-8s] : %(message)s"
+	logFormatter = logging.Formatter(logFormat)
+	logging.basicConfig(filename=f"./logs/{logger_name}.log", format=logFormat,	level=logging.INFO)
+	fileHandler = TimedRotatingFileHandler(
+            f"./logs/{logger_name}.log", when="midnight")
 	#create a file to store all the
 	# logged exceptions
-	logfile = logging.FileHandler(f"./logs/{logger_name}.log")
-	
-	fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-	formatter = logging.Formatter(fmt)
-	
-	logfile.setFormatter(formatter)
-	logger.addHandler(logfile)
-	
+	fileHandler.setFormatter(logFormatter)
+	fileHandler.suffix = "%Y_%m_%d"
+	logger.addHandler(fileHandler)
+
 	return logger
 
 

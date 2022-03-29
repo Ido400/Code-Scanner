@@ -1,3 +1,4 @@
+from cmath import log
 import importlib
 import logging
 
@@ -35,5 +36,6 @@ def load_plugins(plugins: list)->None:
         for plugin_file in plugins:
             plugin = import_module(f"common.plugins.{plugin_file}")
             plugin.register()
+            LOGGER.info(f"The plugin {plugin_file} imported successfully")
     except PluginNotFoundError:
         raise PluginNotFoundError("The plugin not found")

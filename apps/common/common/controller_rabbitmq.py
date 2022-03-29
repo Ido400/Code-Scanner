@@ -1,9 +1,10 @@
-from common.errors.connection_rabbit import FailedConnectRabbit
-from common.errors.exchange import ExchangeNotFound
-from common.logging_controller import exception
 import logging
 import pika
 from pika.exceptions import AMQPConnectionError, ChannelClosedByBroker
+
+from common.errors.connection_rabbit import FailedConnectRabbit
+from common.errors.exchange import ExchangeNotFound
+from common.logging_controller import exception
 
 LOGGER = logging.getLogger(__name__)
 
@@ -68,6 +69,7 @@ class Rabbit:
             with self.connection.channel() as channel:
                 channel.queue_declare(
                     queue=queue_name, durable=durable, auto_delete=auto_delete)
+            LOGGER.info(f"The queue {queue_name} was decalared")
         except SyntaxError as e:
             raise SyntaxError(f"{e}")
         except AMQPConnectionError as e:
@@ -86,6 +88,7 @@ class Rabbit:
         try:
             with self.connection.channel() as channel:
                 channel.exchange_declare(exchange=exchange,exchange_type=type)
+            LOGGER.info(f"The exchange {exchange} was decalared")
         except SyntaxError as e:
             raise SyntaxError(f"{e}")
     
@@ -104,6 +107,8 @@ class Rabbit:
             with self.connection.channel() as channel:
                 channel.queue_bind(exchange=exchange, queue=queue, 
                                     routing_key=routing_key)
+            LOGGER.info(f"The queue {queue} was bind to the exchange {exchange} \
+                            and the routing key {routing_key}")
         except SyntaxError as e:
             raise SyntaxError(f"{e}")
         except AMQPConnectionError as e:
@@ -131,6 +136,7 @@ class Rabbit:
                     routing_key=routing_key,
                     body=message,
                     properties=pika.BasicProperties(delivery_mode=2,) if message_persistent else None)
+            LOGGER.info(f"The message was sent to the exchange - {exchange} routing key {routing_key}")
         except SyntaxError as e:         
             raise SyntaxError(f"{e}")
         except ChannelClosedByBroker as e:
@@ -159,7 +165,7 @@ class Rabbit:
             func(body.decode("utf-8"))
             if acknowledge:
                 ch.basic_ack(delivery_tag=method.delivery_tag)
-
+                LOGGER.info(f"Consumed from the queue {queue}")
         try:
             with self.connection.channel() as channel:
                 channel.basic_qos(prefetch_count=prefetch_count)

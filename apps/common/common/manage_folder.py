@@ -26,16 +26,20 @@ class ManageFolder:
         response  = requests.post(f"{self.url}/dir", json=data)
         if(response.status_code == 400):
             raise DirExists(response.text)
-    
+        if(response.status_code == 200):
+            LOGGER.info("Successfully create Directory")
+
     @exception(LOGGER)
     def create_file(self, dir_name:str, file_name:str, file_data:str) -> None:
         """
-        This method will create new file
+        This method will create a new file
         """
         data = {"dir_name":dir_name, "file_name":file_name, "file_data":file_data}
         response = requests.post(f"{self.url}/file", json=data)
         if(response.status_code == 404):
             raise DirNotFound(response.text)
+        if(response.status_code == 200):
+            LOGGER.info("Successfully create file")
     
     @exception(LOGGER)
     async def read_data(self, dir_name:str, file_name:str, strategy:ReadData) -> str:
@@ -57,6 +61,8 @@ class ManageFolder:
         response = requests.get(f"{self.url}/file", json=data)
         if(response.status_code == 404):
             FileNotFoundError(response.text)
-        data =  strategy.read_data(response.text)
-        return data
-    
+        if(response.status_code == 200):
+            LOGGER.info("Successfully read data from file")
+            data =  strategy.read_data(response.text)
+            return data
+        

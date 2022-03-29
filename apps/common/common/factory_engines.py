@@ -40,6 +40,7 @@ class FactoryEngines:
         engine_name = args_copy.pop("name")
         try:
             creator_func = self.engine_creator[engine_name]
+            LOGGER.info(f"Import the plugin {engine_name}")
         except KeyError:
             raise ValueError(f"The Type {engine_name} don't exits")
         return creator_func(**arguments)

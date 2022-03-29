@@ -19,7 +19,8 @@ def create_dir() ->str:
         file_system.create_dir(data["dir_name"])
         return "OK", 200
     except DirExists:
-        return "The dir exists", 400
+        return "Try to create existsting folder", 400
+        
 @app.route("/file", methods=["POST"])
 def create_file() ->str:
     """
