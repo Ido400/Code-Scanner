@@ -11,7 +11,7 @@ from common.documents.user_document import User
 
 
 
-MONGO_CONNECTION_STRING = "mongodb://root:Aa123456@localhost:27017/"
+MONGO_CONNECTION_STRING = "mongodb://localhost:27017/"
 
 app = FastAPI()
 
