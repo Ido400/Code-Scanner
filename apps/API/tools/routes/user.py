@@ -6,7 +6,6 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 from common.documents.user_document import User
-from common.logging_controller import exception
 
 router = APIRouter(prefix="/user")
 
@@ -22,6 +21,7 @@ async def add_user(user: User):
     """
     try:
         await user.insert()
+        raise HTTPException(status_code=200, detail="Insert the username")
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="The username is exists")
 
@@ -55,8 +55,6 @@ async def update_user(user_update: User):
         await user.save()
     except AttributeError:
         raise HTTPException(status_code=404, detail=f"The user name {user_update.user_name} not found")
-    except DuplicateKeyError:
-        raise HTTPException(status_code=400, detail="The username is exists")
 
 @router.put("/upsert")
 async def upsert_user(user: User):
@@ -67,15 +65,11 @@ async def upsert_user(user: User):
         body: User
     This method will upsert the User.
     """
-    try:
-        await User.find_one(User.user_name == user.user_name).upsert(
-            Set({User.engines:user.engines, User.folders:user.folders}),
-            on_insert=user
-        )
-    except AttributeError:
-        raise HTTPException(status_code=404, detail=f"The user name {user.user_name} not found")
-    except DuplicateKeyError:
-        raise HTTPException(status_code=400, detail="The username is exists")
+    await User.find_one(User.user_name == user.user_name).upsert(
+        Set({User.engines:user.engines, User.folders:user.folders}),
+        on_insert=user
+    )
+  
        
 
 @router.delete("/{user_name}", response_model=User)

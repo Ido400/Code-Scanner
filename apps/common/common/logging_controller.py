@@ -1,5 +1,3 @@
-from asyncio.log import logger
-import sys
 import logging
 from functools import wraps
 from logging.handlers import TimedRotatingFileHandler
@@ -40,7 +38,7 @@ def exception(logger):
 				issue = issue+"-------------------------\
 				------------------------------------------------\n"
 				logger.exception(issue)
-		
+				raise
 		return wrapper
 	return decorator
 
