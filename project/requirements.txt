@@ -1,8 +1,4 @@
 -e apps/common
--e apps/API
--e apps/Master
--e apps/PasswordEngine
--e apps/Storage
 Flask[async]==2.0.3
 motor=-2.5.1
 fastapi==0.75.0
