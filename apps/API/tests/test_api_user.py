@@ -1,9 +1,8 @@
 import sys
 import os
-import motor
-from beanie import init_beanie
+
 from fastapi.testclient import TestClient
-from common.documents.user_document import User
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from main import app
 
