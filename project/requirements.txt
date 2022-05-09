@@ -3,3 +3,4 @@ Flask[async]==2.0.3
 motor==2.5.1
 fastapi==0.75.0
 uvicorn==0.17.6
+beanie==1.10.1
