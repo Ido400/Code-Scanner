@@ -28,6 +28,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f /project/requirements.txt ]; then pip install -r /project/requirements.txt; fi
+        cd docker 
+        docker-compose up --build -d
     - name: Lint with flake8
       run: |
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
